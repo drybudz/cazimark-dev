@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAZIMARK</title>
+    <link rel="icon" type="image/png" href="images/cm-favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Gelasio', serif;
+            background-color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 300px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .password-container {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .password-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Gelasio', serif;
+            background-color: #f8f8f8;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #333;
+            background-color: white;
+        }
+
+        .submit-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Gelasio', serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: fit-content;
+        }
+
+        .submit-btn:hover {
+            background-color: #555;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .thank-you-page {
+            display: none;
+            text-align: center;
+        }
+
+        .thank-you-page.show {
+            display: block;
+        }
+
+        .coming-soon {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #333;
+            margin-top: 40px;
+            min-height: 60px;
+        }
+
+        .typing-cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Dark theme styles */
+        body.dark-mode {
+            background-color: #000;
+            color: #fff;
+        }
+
+        body.dark-mode .logo img {
+            /* No filter needed - using proper white logo image */
+        }
+
+        body.dark-mode .password-input {
+            background-color: #222;
+            border-color: #444;
+            color: #fff;
+        }
+
+        body.dark-mode .password-input:focus {
+            border-color: #fff;
+            background-color: #333;
+        }
+
+        body.dark-mode .submit-btn {
+            background-color: #fff;
+            color: #000;
+        }
+
+        body.dark-mode .submit-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode .coming-soon {
+            color: #fff;
+        }
+
+        /* Fade out animation */
+        .fade-out {
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .logo img {
+                max-width: 250px;
+            }
+            
+            .coming-soon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="password-page">
+            <div class="logo">
+                <img src="images/CAZIMARK_BonW.png" alt="CAZIMARK Logo">
+            </div>
+            <div class="password-container">
+                <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
+                <button id="submit-btn" class="submit-btn">Submit</button>
+                <div id="error-message" class="error-message">Incorrect password. Please try again.</div>
+            </div>
+        </div>
+
+        <div id="thank-you-page" class="thank-you-page">
+            <div class="logo">
+                <img src="images/CAZIMARK_BonW.png" alt="CAZIMARK Logo">
+            </div>
+            <div id="coming-soon" class="coming-soon"></div>
+        </div>
+    </div>
+
+    <script>
+        const CORRECT_PASSWORDS = ['CMXXV', 'admin'];
+        const passwordInput = document.getElementById('password-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorMessage = document.getElementById('error-message');
+        const passwordPage = document.getElementById('password-page');
+        const thankYouPage = document.getElementById('thank-you-page');
+        const comingSoonElement = document.getElementById('coming-soon');
+
+        function handleSubmit() {
+            const enteredPassword = passwordInput.value.trim();
+            const enteredPasswordUpper = enteredPassword.toUpperCase();
+            
+            if (CORRECT_PASSWORDS.includes(enteredPassword) || CORRECT_PASSWORDS.includes(enteredPasswordUpper)) {
+                passwordPage.style.display = 'none';
+                thankYouPage.classList.add('show');
+                startTypingAnimation();
+            } else {
+                errorMessage.classList.add('show');
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function startTypingAnimation() {
+            const text = 'Coming Soon';
+            let index = 0;
+            
+            function typeText() {
+                if (index < text.length) {
+                    comingSoonElement.textContent = text.substring(0, index + 1);
+                    index++;
+                    setTimeout(typeText, 150);
+                } else {
+                    comingSoonElement.innerHTML = text + '<span class="typing-cursor">|</span>';
+                    
+                    // Remove cursor completely after 5 seconds
+                    setTimeout(() => {
+                        const cursor = comingSoonElement.querySelector('.typing-cursor');
+                        if (cursor) {
+                            cursor.remove();
+                        }
+                    }, 5000);
+                    
+                    // Start fade out after 7 seconds (5 seconds blinking + 2 seconds pause)
+                    setTimeout(() => {
+                        comingSoonElement.classList.add('fade-out');
+                    }, 7000);
+                }
+            }
+            
+            setTimeout(typeText, 500);
+        }
+
+        // Dark mode toggle functionality
+        let clickCount = 0;
+        let clickTimeout;
+        const logoImages = document.querySelectorAll('.logo img');
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            logoImages.forEach(img => {
+                img.src = isDarkMode ? 'images/CAZIMARK_WonB.png' : 'images/CAZIMARK_BonW.png';
+            });
+        }
+        
+        function handleLogoClick() {
+            clickCount++;
+            
+            // Clear existing timeout
+            clearTimeout(clickTimeout);
+            
+            if (clickCount === 3) {
+                toggleDarkMode();
+                clickCount = 0;
+            } else {
+                // Reset count after 1 second if not clicked 3 times
+                clickTimeout = setTimeout(() => {
+                    clickCount = 0;
+                }, 1000);
+            }
+        }
+        
+        // Add click event listeners to logo images
+        logoImages.forEach(img => {
+            img.addEventListener('click', handleLogoClick);
+        });
+
+        submitBtn.addEventListener('click', handleSubmit);
+        
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        });
+
+        window.addEventListener('load', function() {
+            passwordInput.focus();
+        });
+    </script>
+</body>
+</html>
+
