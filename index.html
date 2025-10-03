@@ -168,12 +168,53 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                max-width: 90%;
+            }
+            
             .logo img {
                 max-width: 250px;
             }
             
+            .password-input {
+                max-width: 280px;
+                padding: 12px 18px;
+            }
+            
             .coming-soon {
                 font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 95%;
+            }
+            
+            .logo img {
+                max-width: 200px;
+            }
+            
+            .password-input {
+                max-width: 250px;
+                padding: 10px 15px;
+            }
+            
+            .submit-btn {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+            
+            .coming-soon {
+                font-size: 1.8rem;
             }
         }
     </style>
